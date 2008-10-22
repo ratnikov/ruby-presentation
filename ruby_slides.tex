@@ -135,18 +135,38 @@
     \end{onlyenv}
     \begin{onlyenv}<2->
       \begin{itemize}
-        \item<2> \texttt{inject}'s block takes two parameters:
-        \begin{itemize}
-	  \item{acc}: accumulator result from previous call.
-	  \item{item}: currently iterated item.
-        \end{itemize}
+        \item<2> \texttt{inject}'s block takes accumulator and item parameters.
         \item<3> Return of the block is passed in the next acc
         \item<4> Last acc is returned by the \texttt{inject} which is fed into \texttt{puts}.
       \end{itemize}
     \end{onlyenv}
     \end{block}
 \end{frame}
-  
+
+\begin{frame}[t,fragile]
+  \frametitle{Declaring a Method With Block}
+  \begin{block}{Sample implementation of \texttt{inject}}
+    \begin{semiverbatim}
+      \uncover<1->{def my\_inject(arr, init, \alert<2>{\&block})}
+      \uncover<1->{  \alert<2>{raise "Block missing" unless block\_given?}}
+      \uncover<1->{  acc = init}
+      \uncover<1->{  arr.each \{ |item| acc = \alert<3>{yield(acc, item)} \} }
+      \uncover<1->{  acc}
+      \uncover<1->{end}
+    \end{semiverbatim}
+  \end{block}
+
+  \begin{onlyenv}<2->
+    \begin{itemize}
+      \only<1>{\item{}}
+      \begin{onlyenv}<2>
+	\item Block is passed using \&
+	\item \texttt{block\_given?} returns whether method was provided a block.
+      \end{onlyenv}
+      \only<3>{\item \texttt{yield} yields control to the provided block with specified parameters.}
+    \end{itemize}
+  \end{onlyenv}
+\end{frame}
 
 \section{Advanced Basics}
 \begin{frame}
