@@ -161,9 +161,11 @@
 \end{frame}
 
 \section{Object orientation}
+\subsection{Classes}
+
 \begin{frame}
-  \frametitle{Declaring a Class}
-  \begin{block}{Syntax:}
+  \frametitle{Declaring a class}
+  \begin{block}{Declaration syntax:}
   \begin{itemize}
     \item Classes are declared by keyword \texttt{class}
     \item Instance variables are specified by prepending '@' to \\ a variable name (e.g. \texttt{@foo})
@@ -173,21 +175,38 @@
 \end{frame}
 
 \begin{frame}[t,fragile]
-  \frametitle{Declaring a Class (cont.)}
+  \frametitle{Sample declaration}
   \begin{example}
     \begin{semiverbatim}
-      \uncover<1->{class \alert<2>{Circle < GeoFigure}}
-      \uncover<1->{  @@name = 'Circle'}
-      \uncover<1->{  def radius; @radius end}
-      \uncover<1->{  def radius=(new\_radius)}
-      \uncover<1->{    @radius = new\_radius; @radius}
+      \uncover<1->{class \alert<2>{Book}}
+      \uncover<1->{  def title; @title end}
+      \uncover<1->{  def title=(new\_title)}
+      \uncover<1->{    @title = new\_title; @title}
       \uncover<1->{  end}
+      \uncover<1->{  \alert<3>{attr\_accessor :author, :isbn}}
       \uncover<1->{end}
     \end{semiverbatim}
   \end{example}
 
   \begin{itemize}
-    \item<2> Declares that \texttt{Circle} inherits from \texttt{GeoFigure}
+    \item<2> Class names must be capitalized. 
+    \item<3> Creates \texttt{:author} and \texttt{isbn} accessors.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]
+  \frametitle{Inheritance}
+  \begin{example}[Inheriting classes]
+    \begin{semiverbatim}
+      \uncover<1->{class \alert<2>{PhotoAlbum < Book}}
+      \uncover<1->{  \alert<3>{attr\_accessor :pictures}}
+      \uncover<1->{end}
+    \end{semiverbatim}
+  \end{example}
+
+  \begin{itemize}
+    \item<2> \texttt{PhotoAlbum} now inherits all instance methods from \texttt{Book} class.
+    \item<3> And has an additional pictures accessor.
   \end{itemize}
 \end{frame}
 
