@@ -1,0 +1,163 @@
+\documentclass{beamer}
+\usepackage{beamerthemesplit}
+\setbeamercovered{transparent}
+
+\title{Ruby 101}
+\author{Dmitry Ratnikov}
+\date{\today}
+
+\begin{document}
+\frame{\titlepage}
+
+\section[]{Outline}
+\frame{\tableofcontents}
+
+\section{Basics}
+
+\begin{frame}
+  \frametitle{What is ruby?}
+  \begin{block}{Wikipedia says...}
+    Ruby is a \alert<2,3>{dynamic}, \alert<2,4>{reflective}, general purpose \alert<2,5>{object-oriented} programming language that combines syntax 
+    inspired by \alert<6>{Perl} with \alert<6>{Smalltalk}-like features. 
+  \end{block}
+\end{frame}
+  
+\begin{frame}[fragile]
+  \frametitle{Variables/Arrays/Hashes}
+  \begin{itemize}
+    \item<1->{Variables}
+      \begin{verbatim}
+	foo = "foo"
+	size = 5
+      \end{verbatim}
+    \item<2->{Arrays}
+      \begin{verbatim}
+	arr = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+	complex_array = [ "simple_array:", arr ]
+      \end{verbatim}
+    \item<3->{Hashes}
+      \begin{verbatim}
+	hash = { :hello => "world" }
+	complex_hash = { arr => "Simple array", 
+	  :complex_array => { :label => "Complex array", 
+	                      :value => complex_array }
+      \end{verbatim}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Defining Methods}
+  \begin{block}{Making life easier}
+    \begin{semiverbatim}
+      \uncover<1->{\alert<2>{def} \alert<3>{make\_hash\_key}\alert<2>{(label, value)}}
+      \uncover<1->{  \alert<4>{\{ :label => label, :value => value \}} }
+      \uncover<1->{\alert<2>{end}}
+    \end{semiverbatim}
+    \begin{itemize}
+      \item<2>Method body is enclosed by \texttt{def} and \texttt{end}. \\ Parameters are a list of variable names.
+      \item<3>Method name must be lower case letters and \_. \\ It may be suffixed by ?, = or !.
+      \item<4>Last line is returned by the method.
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Control Structures}
+  \begin{columns}[t]
+    \column{.5\textwidth}
+      \begin{block}{if/else}
+        \begin{verbatim}
+	  if foo
+	    puts "foo!"
+	  else
+	    puts "Not foo..."
+	  end
+
+	  puts "Bar" unless bar
+	\end{verbatim}
+      \end{block}
+    \column{.5\textwidth}
+      \begin{block}{for/while}
+	\begin{verbatim}
+	  for i in 0..(arr.size) do
+	    puts "#{arr[i]}"
+	  end
+
+	  file = File.open("foo.txt")
+	  while (line = file.gets)
+	    puts "line: #{line.chop}"
+	  end
+	\end{verbatim}
+      \end{block}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[t,fragile]
+  \frametitle{Blocks/iterators}
+  \begin{block}{Same thing, but easier}
+    \begin{semiverbatim}
+      \# Displaying all items in an array
+      \uncover<1->{str = ""}
+      \uncover<1->{\alert<2>{arr.each} \alert<3>{\{ |item|} \alert<4>{str += "#\{item\} "} \alert<3>{\}}}
+      \uncover<1->{puts str.inspect}
+    \end{semiverbatim}
+  \end{block}
+  \begin{onlyenv}<1>
+    \begin{block}{Produces:}
+      \begin{verbatim}
+        "1 2 3 4 5 6 7 8 9 10"
+      \end{verbatim}
+    \end{block}
+  \end{onlyenv}
+
+  \begin{itemize}
+    \item<2> Invoke method \texttt{each} on variable \texttt{arr}.
+    \item<3> Declare a block that takes one parameter as \texttt{item}.
+    \item<4> Specify the body of the block to output the \texttt{item}.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]
+  \frametitle{Accumulator Style}
+  \begin{block}{Even easier}
+    \begin{semiverbatim}
+      \# Displaying all items in an array
+      \uncover<1->{puts \alert<4>{arr.inject("") do \alert<2>{|acc, item|}}}
+      \uncover<1->{  \alert<3,4>{"#\{acc\} #\{item\}"}}
+      \uncover<1->{\alert<4>{end}}
+    \end{semiverbatim}
+    \begin{onlyenv}<1>
+      \begin{block}{Produces:}
+	\begin{verbatim}
+	  "1 2 3 4 5 6 7 8 9 10"
+	\end{verbatim}
+      \end{block}
+    \end{onlyenv}
+    \begin{onlyenv}<2->
+      \begin{itemize}
+        \item<2> \texttt{inject}'s block takes two parameters:
+        \begin{itemize}
+	  \item{acc}: accumulator result from previous call.
+	  \item{item}: currently iterated item.
+        \end{itemize}
+        \item<3> Return of the block is passed in the next acc
+        \item<4> Last acc is returned by the \texttt{inject} which is fed into \texttt{puts}.
+      \end{itemize}
+    \end{onlyenv}
+    \end{block}
+\end{frame}
+  
+
+\section{Advanced Basics}
+\begin{frame}
+\end{frame}
+
+\section{Duck Typing}
+\begin{frame}
+\end{frame}
+
+\section{Meta Stuff}
+\begin{frame}
+\end{frame}
+
+\end{document}
