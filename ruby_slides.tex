@@ -49,9 +49,9 @@
   \frametitle{Defining Methods}
   \begin{block}{Making life easier}
     \begin{semiverbatim}
-      \uncover<1->{\alert<2>{def} \alert<3>{available?}\alert<2>{(library, book\_name)}}
-      \uncover<1->{  \alert<4>{library[:available].include?(book\_name)} }
-      \uncover<1->{\alert<2>{end}}
+    \uncover<1->{\alert<2>{def} \alert<3>{available?}\alert<2>{(library, book\_name)}}
+    \uncover<1->{  \alert<4>{library[:available].include?(book\_name)} }
+    \uncover<1->{\alert<2>{end}}
     \end{semiverbatim}
     \begin{itemize}
       \item<2>Method body is enclosed by \texttt{def} and \texttt{end}. \\ Parameters are a list of variable names.
@@ -102,11 +102,11 @@
   \frametitle{Blocks/iterators}
   \begin{block}{Same as for, but easier}
     \begin{semiverbatim}
-      \uncover<1->{str = ""}
-      \uncover<1->{\alert<2>{library[:checked\_out].each} \alert<3>{do |book|}} 
-      \uncover<1->{  \alert<4>{str += "#\{book\} "}}
-      \uncover<1->{\alert<3>{end}}
-      \uncover<1->{puts "Checked out books: #\{str\}}
+    \uncover<1->{str = ""}
+    \uncover<1->{\alert<2>{library[:checked\_out].each} \alert<3>{do |book|}} 
+    \uncover<1->{  \alert<4>{str += "#\{book\} "}}
+    \uncover<1->{\alert<3>{end}}
+    \uncover<1->{puts "Checked out books: #\{str\}}
     \end{semiverbatim}
   \end{block}
 
@@ -121,10 +121,10 @@
   \frametitle{Accumulator Style}
   \begin{block}{Even easier}
     \begin{semiverbatim}
-      \uncover<1->{str = \alert<4>{arr.inject("") do \alert<2>{|acc, item|}}}
-      \uncover<1->{  \alert<3,4>{"#\{acc\} #\{item\}"}}
-      \uncover<1->{\alert<4>{end}}
-      \uncover<1->{puts "Checked out books: #\{str\}"}
+    \uncover<1->{str = \alert<4>{arr.inject("") do \alert<2>{|acc, item|}}}
+    \uncover<1->{  \alert<3,4>{"#\{acc\} #\{item\}"}}
+    \uncover<1->{\alert<4>{end}}
+    \uncover<1->{puts "Checked out books: #\{str\}"}
     \end{semiverbatim}
     \begin{itemize}
       \item<2> \texttt{inject}'s block takes accumulator and book parameters.
@@ -176,17 +176,16 @@
 
 \begin{frame}[t,fragile]
   \frametitle{Sample declaration}
-  \begin{example}
-    \begin{semiverbatim}
-      \uncover<1->{class \alert<2>{Book}}
-      \uncover<1->{  def title; @title end}
-      \uncover<1->{  def title=(new\_title)}
-      \uncover<1->{    @title = new\_title; @title}
-      \uncover<1->{  end}
-      \uncover<1->{  \alert<3>{attr\_accessor :author, :isbn}}
-      \uncover<1->{end}
-    \end{semiverbatim}
-  \end{example}
+  \begin{semiverbatim}
+    \uncover<1->{class \alert<2>{Book}}
+    \uncover<1->{  @@library = Library.instance }
+    \uncover<1->{  def name; @title end}
+    \uncover<1->{  def name=(new\_title)}
+    \uncover<1->{    @title = new\_title; @title}
+    \uncover<1->{  end}
+    \uncover<1->{  \alert<3>{attr\_accessor :author, :isbn}}
+    \uncover<1->{end}
+  \end{semiverbatim}
 
   \begin{itemize}
     \item<2> Class names must be capitalized. 
@@ -198,23 +197,78 @@
   \frametitle{Inheritance}
   \begin{example}[Inheriting classes]
     \begin{semiverbatim}
-      \uncover<1->{class \alert<2>{PhotoAlbum < Book}}
-      \uncover<1->{  \alert<3>{attr\_accessor :pictures}}
-      \uncover<1->{end}
+    \uncover<1->{class \alert<2>{Game < Book}}
+    \uncover<1->{  \alert<3>{attr\_accessor :platform}}
+    \uncover<1->{end}
     \end{semiverbatim}
   \end{example}
 
   \begin{itemize}
-    \item<2> \texttt{PhotoAlbum} now inherits all instance methods from \texttt{Book} class.
-    \item<3> And has an additional pictures accessor.
+    \item<2> \texttt{Game} now inherits all instance methods from \texttt{Book} class.
+    \item<3> And has an additional platform accessor.
+    \item<4> But... inherits isbn which games do not really have.
   \end{itemize}
 \end{frame}
 
+\begin{frame}[t]
+  \frametitle{How do we fix it?}
+  \begin{block}{What we really want is:}
+    Encapsulate the `has name' functionality that allows classes \\ 
+    to have a name and author and then include it into \texttt{Book} \\ 
+    and \texttt{Game} classes.
+  \end{block}
+  \begin{onlyenv}<2>
+    \begin{block}{Solution:}
+      Modules
+    \end{block}
+  \end{onlyenv}
+\end{frame}
+
+\subsection{Modules}
+
 \begin{frame}
-  \frametitle{Modules}
+  \frametitle{What's a module}
   \begin{definition}[Module]
-    Module is an encapsulated piece of functionality.
+    A Module is a collection of methods and constants.
   \end{definition}
+
+  \begin{block}{Game plan:}<2->
+    \begin{itemize}
+      \item<2> Create \texttt{HasName} module that gives \texttt{name} functionality.
+      \item<3> Weave it into \texttt{Book} and \texttt{Game} classes.
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]
+  \frametitle{Declaring a module}
+  \begin{semiverbatim}
+    \uncover<1->{module \alert<2>{HasName}}
+    \uncover<1->{  attr\_accessor :name, :author}
+    \uncover<1->{end}
+  \end{semiverbatim}
+
+  \begin{itemize}
+    \item<2> Same rules as for classes: must be capitalized.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Including a module}
+  \begin{semiverbatim}
+    \uncover<1->{class Book}
+    \uncover<1->{  include HasName}
+    \uncover<1->{  attr\_accessor :isbn}
+    \uncover<1->{end}
+    \uncover<1->{class Game}
+    \uncover<1->{  include HasName}
+    \uncover<1->{  attr\_accessor :platform}
+    \uncover<1->{end}
+  \end{semiverbatim}
+
+  \begin{itemize}
+    \item \texttt{Book} and \texttt{Game} are now independent, but shared functionality is abstracted neatly in the \texttt{HasName} module.
+  \end{itemize}
 \end{frame}
 
 \section{Duck Typing}
