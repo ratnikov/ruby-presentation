@@ -1,0 +1,27 @@
+\frametitle {Accumulator Style}
+  \begin{block}{Even easier}
+    \begin{semiverbatim}
+      \# Displaying all items in an array
+      \uncover<1->{puts \alert<4>{arr.inject("") do \alert<2>{|acc, item|}}}
+      \uncover<1->{  \alert<3,4>{"#\{acc\} #\{item\}"}}
+      \uncover<1->{\alert<4>{end}}
+    \end{semiverbatim}
+    \begin{onlyenv}<1>
+      \begin{block}{Produces:}
+\begin{verbatim}
+  "1 2 3 4 5 6 7 8 9 10"
+\end{verbatim}
+      \end{block}
+    \end{onlyenv}
+    \begin{onlyenv}<2->
+      \begin{itemize}
+        \item<2> \texttt{inject}'s block takes two parameters:
+        \begin{itemize}
+  \item{acc}: accumulator result from previous call.
+  \item{item}: currently iterated item.
+        \end{itemize}
+        \item<3> Return of the block is passed in the next acc
+        \item<4> Last acc is returned by the \texttt{inject} which is fed into \texttt{puts}.
+      \end{itemize}
+    \end{onlyenv}
+    \end{block}
