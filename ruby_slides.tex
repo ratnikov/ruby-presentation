@@ -271,7 +271,48 @@
   \end{itemize}
 \end{frame}
 
-\section{Duck Typing}
+\section{Meta Programming}
+
+\begin{frame}[fragile]
+  \frametitle{Extending Ruby}
+  \begin{block}{Suppose we want to be able to do:}
+  \begin{verbatim}
+     5.inject { |i| puts i }
+  \end{verbatim}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Extending Ruby (Cont.)}
+  \begin{block}{No problem:}
+  \begin{verbatim}
+    class Fixnum
+      def inject(init = nil, &block)
+        raise "Block missing" unless block_given?
+        acc = init
+        for i in 0..(self-1) do
+          init = yield(init, i)
+        end
+      end
+    end
+  \end{verbatim}
+  \end{block}
+\end{frame}
+
+\section{Extreme Programming}
+
+\subsection{DRY}
+
+\begin{frame}
+  \frametitle{DRY}
+  \begin{block}{Do not repeat yourself}
+    \begin{visibleenv}<2>
+      \begin{itemize}
+        \item<2->Code/
+      \end{itemize}
+    \end{visibleenv}
+  \end{block}
+\end{frame}
 
 \subsection{Interface}
 
@@ -299,10 +340,13 @@
   \begin{block}{Duck typing principle}
     If it walks like a duck and quacks like a duck, it is a duck.
   \end{block}
-\end{frame}
-
-\section{Meta Stuff}
-\begin{frame}
+  \begin{visibleenv}<2>
+  \begin{block}{In practice that means}
+    \begin{itemize}
+      \item<2> What's important is what an object does (or can do) and not what it is.
+    \end{itemize}
+  \end{block}
+  \end{visibleenv}
 \end{frame}
 
 \end{document}
