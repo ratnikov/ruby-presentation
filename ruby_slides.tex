@@ -254,7 +254,7 @@
 \end{frame}
 
 \begin{frame}[fragile]
-  \frametitle{Including a module}
+  \frametitle{Using a module}
   \begin{semiverbatim}
     \uncover<1->{class Book}
     \uncover<1->{  include HasName}
@@ -267,12 +267,38 @@
   \end{semiverbatim}
 
   \begin{itemize}
-    \item \texttt{Book} and \texttt{Game} are now independent, but shared functionality is abstracted neatly in the \texttt{HasName} module.
+    \item \texttt{Book} and \texttt{Game} are now independent and shared functionality is abstracted neatly in the \texttt{HasName} module.
   \end{itemize}
 \end{frame}
 
 \section{Duck Typing}
+
+\subsection{Interface}
+
 \begin{frame}
+  \frametitle{Question}
+  \begin{block}{}
+    What's an interface?
+  \end{block}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Interfaces}
+  \begin{block}{Wikipedia says:}
+    Interface generally refers to an abstraction that an entity provides of itself to the outside.
+  \end{block}
+  \begin{itemize}
+    \item<2-> In java, interface type defines how components may interact.
+    \item<3-> In ruby, how components interact defines what interface they have.
+    \item<4->[] (That's called duck typing)
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Duck typing}
+  \begin{block}{Duck typing principle}
+    If it walks like a duck and quacks like a duck, it is a duck.
+  \end{block}
 \end{frame}
 
 \section{Meta Stuff}
