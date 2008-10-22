@@ -4,4 +4,6 @@
 *.toc
 *.snm
 *.swp
-*.nav *.out *.vrb
+*.nav
+*.out
+*.vrb
