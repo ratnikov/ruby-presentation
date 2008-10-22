@@ -271,19 +271,100 @@
   \end{itemize}
 \end{frame}
 
-\section{Meta Programming}
+\section{The Cool Bits}
+
+\subsection{General Principles}
+
+\begin{frame}
+  \frametitle{Principle \#1 (DRY)}
+  \begin{block}{``Don't Repeat Yourself'' principle:}
+    If you have to do something more than once, abstract it away.
+  \end{block}
+  \begin{visibleenv}<2->
+  \begin{block}{Why?}
+      \begin{itemize}
+      \visible<3->{\item Code dublication means you wrote it at least twice.}
+      \visible<4->{\item Code dublication reduces clarity.}
+      \visible<5->{\item Code dublication is much harder to keep in sync.}
+    \end{itemize}
+  \end{block}
+  \end{visibleenv}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Principle \#2 (YAGNI)}
+  \begin{block}{``You Ain't Gonna Need It'' principle:}
+    Always implement things when you actually need them, \\
+    never when you just foresee that you need them.
+  \end{block}
+  \begin{visibleenv}<2->
+  \begin{block}{Why?}
+    \begin{itemize}
+    \visible<3->{\item Time is better spent on something you actually need}
+    \visible<4->{\item What you predict will happen usually is not what really happens.}
+    \visible<5->{\item By the time you will need it, you will know the problem better.} 
+    \end{itemize}
+  \end{block}
+  \end{visibleenv}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Principle \#3 (Duck typing)}
+  \begin{block}{Duck typing principle:}
+    If it walks like a duck and quacks like a duck, it is a duck.
+  \end{block}
+  \begin{visibleenv}<2->
+  \begin{block}{In practice that means}
+    \begin{itemize}
+      \visible<2->{\item What's important is what an object does, not what it is.}
+      \visible<3->{\item In duck-typed languages, interfaces are implicitly specified by defined methods.}
+    \end{itemize}
+  \end{block}
+  \end{visibleenv}
+\end{frame}
 
 \begin{frame}[fragile]
-  \frametitle{Extending Ruby}
+  \frametitle{Principle \#3 (Duck typing, cont.)}
+  \begin{semiverbatim}
+    \uncover<1->{class Library}
+    \uncover<1->{  attr\_accessor :books}
+    \uncover<1->{  def catalog}
+    \uncover<1->{    books.\alert<2>{map} \{ |b| \alert<3>{b.name} \}.\alert<4>{join ", "}}
+    \uncover<1->{  end}
+    \uncover<1->{end}
+  \end{semiverbatim}
+  \begin{visibleenv}<2->
+  \begin{block}{Only things \texttt{Library} cares about:}
+    \begin{itemize}
+      \item<2-> \texttt{books} responds to \texttt{map}.
+      \item<3-> Each element of \texttt{books} responds to \texttt{name}.
+      \item<4-> Whatever \texttt{b.name} returns must be concatenatable by \texttt{join}.
+    \end{itemize}
+  \end{block}
+  \end{visibleenv}
+\end{frame}
+
+\subsection{Extending Ruby}
+
+\begin{frame}[fragile]
+  \frametitle{Adding \texttt{Fixnum\#inject}}
   \begin{block}{Suppose we want to be able to do:}
   \begin{verbatim}
-     5.inject { |i| puts i }
+     sorted_profiles = 50.inject([]) do |acc| 
+       acc + [Profile.random!]
+     end.sort_by { |p| p.name }
   \end{verbatim}
+  \end{block}
+
+  \begin{block}{But...}<2>
+    \begin{itemize}
+      \item But ruby doesn't have Fixnum\#inject
+    \end{itemize}
   \end{block}
 \end{frame}
 
 \begin{frame}[fragile]
-  \frametitle{Extending Ruby (Cont.)}
+  \frametitle{Adding \texttt{Fixnum\#inject} (cont.)}
   \begin{block}{No problem:}
   \begin{verbatim}
     class Fixnum
@@ -296,21 +377,6 @@
       end
     end
   \end{verbatim}
-  \end{block}
-\end{frame}
-
-\section{Extreme Programming}
-
-\subsection{DRY}
-
-\begin{frame}
-  \frametitle{DRY}
-  \begin{block}{Do not repeat yourself}
-    \begin{visibleenv}<2>
-      \begin{itemize}
-        \item<2->Code/
-      \end{itemize}
-    \end{visibleenv}
   \end{block}
 \end{frame}
 
