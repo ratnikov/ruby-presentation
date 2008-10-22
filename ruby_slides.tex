@@ -27,20 +27,20 @@
   \begin{itemize}
     \item<1->{Variables}
       \begin{verbatim}
-	foo = "foo"
-	size = 5
+	pickaxe_book = "Programming Ruby"
+	cs_bible = "Art of Computer Programming"
+	js_book = "Javascript: The Good Parts"
       \end{verbatim}
     \item<2->{Arrays}
       \begin{verbatim}
-	arr = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-	complex_array = [ "simple_array:", arr ]
+	available_books = [ pickaxe_book, cs_bible ]
       \end{verbatim}
     \item<3->{Hashes}
       \begin{verbatim}
-	hash = { :hello => "world" }
-	complex_hash = { arr => "Simple array", 
-	  :complex_array => { :label => "Complex array", 
-	                      :value => complex_array }
+	library = {
+	  :available => available_books,
+	  :checked_out => [ js_book ] 
+	}
       \end{verbatim}
   \end{itemize}
 \end{frame}
@@ -49,8 +49,8 @@
   \frametitle{Defining Methods}
   \begin{block}{Making life easier}
     \begin{semiverbatim}
-      \uncover<1->{\alert<2>{def} \alert<3>{make\_hash\_key}\alert<2>{(label, value)}}
-      \uncover<1->{  \alert<4>{\{ :label => label, :value => value \}} }
+      \uncover<1->{\alert<2>{def} \alert<3>{available?}\alert<2>{(library, book\_name)}}
+      \uncover<1->{  \alert<4>{library[:available].include?(book\_name)} }
       \uncover<1->{\alert<2>{end}}
     \end{semiverbatim}
     \begin{itemize}
@@ -62,58 +62,58 @@
 \end{frame}
 
 \begin{frame}[fragile]
-  \frametitle{Control Structures}
-  \begin{columns}[t]
-    \column{.5\textwidth}
-      \begin{block}{if/else}
-        \begin{verbatim}
-	  if foo
-	    puts "foo!"
-	  else
-	    puts "Not foo..."
-	  end
+  \frametitle{Conditionals}
+  \begin{block}{if/else syntax}
+    \begin{verbatim}
+      if available?(library, "Art of War")
+        puts "Sun Tzu's Art of War is available."
+      else
+        puts "Art of War is not available."
+        puts "Try later..."
+      end
+    \end{verbatim}
+    \begin{block}{Can be inlined:}
+      \verb|      puts "yay" unless boo?|
+    \end{block}
+  \end{block}
+\end{frame}
 
-	  puts "Bar" unless bar
-	\end{verbatim}
-      \end{block}
-    \column{.5\textwidth}
-      \begin{block}{for/while}
-	\begin{verbatim}
-	  for i in 0..(arr.size) do
-	    puts "#{arr[i]}"
-	  end
+\begin{frame}[fragile]
+  \frametitle{Loops}
 
-	  file = File.open("foo.txt")
-	  while (line = file.gets)
-	    puts "line: #{line.chop}"
-	  end
-	\end{verbatim}
-      \end{block}
-  \end{columns}
+  \begin{block}{For/While loops:}
+    \begin{verbatim}
+      file = File.open("checked_out_backup.txt")
+      while (book = file.gets)
+        library[:checked_out] << book
+      end
+    \end{verbatim}
+    \begin{verbatim}
+      str = ""
+      for i in 0..(library[:checked_out].size) do
+        str += "#{library[:checked_out][i]} "
+      end
+      puts "Checked out books: #{str}"
+    \end{verbatim}
+  \end{block}
 \end{frame}
 
 \begin{frame}[t,fragile]
   \frametitle{Blocks/iterators}
-  \begin{block}{Same thing, but easier}
+  \begin{block}{Same as for, but easier}
     \begin{semiverbatim}
-      \# Displaying all items in an array
       \uncover<1->{str = ""}
-      \uncover<1->{\alert<2>{arr.each} \alert<3>{\{ |item|} \alert<4>{str += "#\{item\} "} \alert<3>{\}}}
-      \uncover<1->{puts str.inspect}
+      \uncover<1->{\alert<2>{library[:checked\_out].each} \alert<3>{do |book|}} 
+      \uncover<1->{  \alert<4>{str += "#\{book\} "}}
+      \uncover<1->{\alert<3>{end}}
+      \uncover<1->{puts "Checked out books: #\{str\}}
     \end{semiverbatim}
   \end{block}
-  \begin{onlyenv}<1>
-    \begin{block}{Produces:}
-      \begin{verbatim}
-        "1 2 3 4 5 6 7 8 9 10"
-      \end{verbatim}
-    \end{block}
-  \end{onlyenv}
 
   \begin{itemize}
-    \item<2> Invoke method \texttt{each} on variable \texttt{arr}.
-    \item<3> Declare a block that takes one parameter as \texttt{item}.
-    \item<4> Specify the body of the block to output the \texttt{item}.
+    \item<2> Invoke method \texttt{each} on the checked out books array.
+    \item<3> Declare a block that takes one parameter as \texttt{book}.
+    \item<4> Specify the body of the block to append the \texttt{book} to the \texttt{str}.
   \end{itemize}
 \end{frame}
 
@@ -121,34 +121,26 @@
   \frametitle{Accumulator Style}
   \begin{block}{Even easier}
     \begin{semiverbatim}
-      \# Displaying all items in an array
-      \uncover<1->{puts \alert<4>{arr.inject("") do \alert<2>{|acc, item|}}}
+      \uncover<1->{str = \alert<4>{arr.inject("") do \alert<2>{|acc, item|}}}
       \uncover<1->{  \alert<3,4>{"#\{acc\} #\{item\}"}}
       \uncover<1->{\alert<4>{end}}
+      \uncover<1->{puts "Checked out books: #\{str\}"}
     \end{semiverbatim}
-    \begin{onlyenv}<1>
-      \begin{block}{Produces:}
-	\begin{verbatim}
-	  "1 2 3 4 5 6 7 8 9 10"
-	\end{verbatim}
-      \end{block}
-    \end{onlyenv}
-    \begin{onlyenv}<2->
-      \begin{itemize}
-        \item<2> \texttt{inject}'s block takes accumulator and item parameters.
-        \item<3> Return of the block is passed in the next acc
-        \item<4> Last acc is returned by the \texttt{inject} which is fed into \texttt{puts}.
-      \end{itemize}
-    \end{onlyenv}
-    \end{block}
+    \begin{itemize}
+      \item<2> \texttt{inject}'s block takes accumulator and book parameters.
+      \item<3> Return of the block is passed in the next acc
+      \item<4> Last acc is returned by the \texttt{inject} which is assigned to \texttt{str}.
+    \end{itemize}
+  \end{block}
 \end{frame}
 
 \begin{frame}[t,fragile]
   \frametitle{Declaring a Method With Block}
   \begin{block}{Sample implementation of \texttt{inject}}
     \begin{semiverbatim}
-      \uncover<1->{def my\_inject(arr, init, \alert<2>{\&block})}
+      \uncover<1->{def available\_inject(library, init, \alert<2>{\&block})}
       \uncover<1->{  \alert<2>{raise "Block missing" unless block\_given?}}
+      \uncover<1->{  arr = library[:checked\_out]}
       \uncover<1->{  acc = init}
       \uncover<1->{  arr.each \{ |item| acc = \alert<3>{yield(acc, item)} \} }
       \uncover<1->{  acc}
@@ -197,6 +189,13 @@
   \begin{itemize}
     \item<2> Declares that \texttt{Circle} inherits from \texttt{GeoFigure}
   \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Modules}
+  \begin{definition}[Module]
+    Module is an encapsulated piece of functionality.
+  \end{definition}
 \end{frame}
 
 \section{Duck Typing}
