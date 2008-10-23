@@ -1,4 +1,4 @@
-\documentclass{beamer}
+\documentclass[10]{beamer}
 \usepackage{beamerthemesplit}
 \setbeamercovered{transparent}
 
@@ -222,106 +222,187 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}[t,fragile]
-  \frametitle{Sample declaration}
-  \begin{semiverbatim}
-    \uncover<1->{class \alert<2>{Book}}
-    \uncover<1->{  @@library = Library.instance }
-    \uncover<1->{  def name; @title end}
-    \uncover<1->{  def name=(new\_title)}
-    \uncover<1->{    @title = new\_title; @title}
-    \uncover<1->{  end}
-    \uncover<1->{  \alert<3>{attr\_accessor :author, :isbn}}
-    \uncover<1->{end}
-  \end{semiverbatim}
+\section{Library project}
 
-  \begin{itemize}
-    \item<2> Class names must be capitalized. 
-    \item<3> Creates \texttt{:author} and \texttt{isbn} accessors.
-  \end{itemize}
+\subsection{Specification}
+
+\begin{frame}
+  \frametitle{Library manager}
+  \begin{block}{Boss says:}
+    \begin{quote}
+    Make a library managing application.
+    \end{quote}
+  \end{block}
+  \begin{visibleenv}<2->
+  \begin{block}{After researching the topic, we deduce that the application should:}
+    \begin{itemize}
+      \item<2-> Track books and games for check in and check out. 
+      \item<3-> Provide cataloging of available items.
+    \end{itemize}
+  \end{block}
+  \end{visibleenv}
 \end{frame}
 
-\begin{frame}[t,fragile]
-  \frametitle{Inheritance}
-  \begin{example}[Inheriting classes]
+\subsection{Book class}
+
+\begin{frame}[fragile]
+  \frametitle{app/models/book.rb}
+  \begin{verbatim}
+  class Book
+    attr_accessor :name, :author, :isbn
+    def description
+      "#{name} by #{author}"
+    end
+
+    def initialize options = {}
+      self.name = options.delete(:name) or
+        raise("Need name.")
+      self.author = options.delete(:author) or 
+        raise("Need author.")
+      self.isbn = options.delete(:isbn)
+    end
+  end
+  \end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{test/unit/book\_test.rb}
+  \begin{verbatim}
+  class BookTest < Test::Unit::TestCase
+    def test_description
+      assert_equal "foo by bar", 
+        Book.new(:name => "foo", :author => "bar")
+    end
+    def test_required_options
+      asser_raise(RuntimeError, "should need name) do
+        Book.new :author => "foo"
+      end
+      assert_raise(RuntimeError, "should need author) do
+        Book.new :name => "bar"
+      end
+    end
+  end
+  \end{verbatim}
+\end{frame}
+
+\subsection{Game class}
+
+\begin{frame}[fragile]
+  \frametitle{app/models/game.rb}
     \begin{semiverbatim}
-    \uncover<1->{class \alert<2>{Game < Book}}
-    \uncover<1->{  \alert<3>{attr\_accessor :platform}}
-    \uncover<1->{end}
-    \end{semiverbatim}
-  \end{example}
+  class Game
+    attr\_accessor :name, :author, :platform
+    \alert<2>{def description
+      "#\{name\} by #\{author\}"
+    end}
 
+    def initialize options = \{\}
+      \alert<2>{self.name = options.delete(:name) or
+        raise("Need name.")
+      self.author = options.delete(:author) or 
+        raise("Need author.")}
+      self.platform = options.delete(:platform)
+    end
+    \end{semiverbatim}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{app/models/game.rb 2.0}
+  \begin{semiverbatim}
+  class Game \alert<2>{< Book}
+    \alert<3>{attr\_accessor :platform}
+    def initialize options = \{\}
+      super(options)
+      self.platform = options.delete(:platform)
+    end
+  end
+  \end{semiverbatim}
   \begin{itemize}
-    \item<2> \texttt{Game} now inherits all instance methods from \texttt{Book} class.
-    \item<3> And has an additional platform accessor.
-    \item<4> But... inherits isbn which games do not really have.
+    \item<2-> Now Game inherits all methods from Book class.
+    \item<3-> Has an additional platform attribute.
+    \item<4-> But... inherits isbn, which games do not really have.
   \end{itemize}
 \end{frame}
 
-\begin{frame}[t]
+\begin{frame}
   \frametitle{How do we fix it?}
   \begin{block}{What we really want is:}
-    Encapsulate the `has name' functionality that allows classes \\ 
-    to have a name and author and then include it into \texttt{Book} \\ 
-    and \texttt{Game} classes.
+    \begin{itemize}
+      \item<1-> Encapsulate the `Catalogable' functionality that:
+	\begin{itemize}
+	  \item<2-> does book-keeping of having a name
+	  \item<3-> does book-keeping of having an author.
+	  \item<5-> builds description out of the name and author.
+	\end{itemize}
+      \item<6-> Include that functionality in the \texttt{Book} and \texttt{Game} classes.
+    \end{itemize}
   \end{block}
-  \begin{onlyenv}<2>
+  \begin{visibleenv}<7>
     \begin{block}{Solution:}
       Modules
     \end{block}
-  \end{onlyenv}
+  \end{visibleenv}
 \end{frame}
 
 \subsection{Modules}
 
 \begin{frame}
-  \frametitle{What's a module}
+  \frametitle{Planning the module}
   \begin{definition}[Module]
     A Module is a collection of methods and constants.
   \end{definition}
 
   \begin{block}{Game plan:}<2->
     \begin{itemize}
-      \item<2> Create \texttt{HasName} module that gives \texttt{name} functionality.
-      \item<3> Weave it into \texttt{Book} and \texttt{Game} classes.
+      \item<2-> Create \texttt{Catalogable} module that gives \texttt{name} functionality.
+      \item<3-> Include it into \texttt{Book} and \texttt{Game} classes.
     \end{itemize}
   \end{block}
 \end{frame}
 
-\begin{frame}[t,fragile]
-  \frametitle{Declaring a module}
-  \begin{semiverbatim}
-    \uncover<1->{module \alert<2>{HasName}}
-    \uncover<1->{  attr\_accessor :name, :author}
-    \uncover<1->{end}
-  \end{semiverbatim}
-
-  \begin{itemize}
-    \item<2> Same rules as for classes: must be capitalized.
-  \end{itemize}
+\begin{frame}[fragile]
+  \frametitle{app/models/catalogable.rb}
+  \begin{verbatim}
+  module Catalogable
+    attr_accessor :name, :author
+    def description
+      "#{name} by #{author}"
+    end
+  end
+  \end{verbatim}
 \end{frame}
 
 \begin{frame}[fragile]
   \frametitle{Using a module}
   \begin{semiverbatim}
     \uncover<1->{class Book}
-    \uncover<1->{  include HasName}
+    \uncover<1->{  include Catalogable}
     \uncover<1->{  attr\_accessor :isbn}
     \uncover<1->{end}
     \uncover<1->{class Game}
-    \uncover<1->{  include HasName}
+    \uncover<1->{  include Catalogable}
     \uncover<1->{  attr\_accessor :platform}
     \uncover<1->{end}
   \end{semiverbatim}
 
   \begin{itemize}
-    \item \texttt{Book} and \texttt{Game} are now independent and shared functionality is abstracted neatly in the \texttt{HasName} module.
+    \item \texttt{Book} and \texttt{Game} are now independent and shared functionality is abstracted neatly in the \texttt{Catalogable} module.
   \end{itemize}
 \end{frame}
 
-\section{The Cool Bits}
+\section{The cool bits}
 
-\subsection{General Principles}
+\begin{frame}
+  \begin{block}{Ruby: The cool bits}
+    \begin{itemize}
+      \item Some ruby principles
+      \item Extending ruby
+      \item DRYing things up with dynamic method generation.
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\subsection{Ruby principles}
 
 \begin{frame}
   \frametitle{Principle \#1 (DRY)}
@@ -380,27 +461,39 @@
 \end{frame}
 
 \begin{frame}[fragile]
-  \frametitle{Principle \#3 (Duck typing, cont.)}
+  \frametitle{Duck typing in use}
   \begin{semiverbatim}
     \uncover<1->{class Library}
-    \uncover<1->{  attr\_accessor :books}
+    \uncover<1->{  attr\_accessor :items}
     \uncover<1->{  def catalog}
-    \uncover<1->{    books.\alert<2>{map} \{ |b| \alert<3>{b.name} \}.\alert<4>{join ", "}}
+    \uncover<1->{    items.\alert<2>{map} \{ |b| \alert<3>{b.description} \}.\alert<4>{join ", "}}
     \uncover<1->{  end}
     \uncover<1->{end}
   \end{semiverbatim}
   \begin{visibleenv}<2->
-  \begin{block}{Only things \texttt{Library} cares about:}
+  \begin{block}{Only things this \texttt{Library} implementation cares about:}
     \begin{itemize}
-      \item<2-> \texttt{books} responds to \texttt{map}.
-      \item<3-> Each element of \texttt{books} responds to \texttt{name}.
-      \item<4-> Whatever \texttt{b.name} returns must be concatenatable by \texttt{join}.
+      \item<3-> \texttt{items} responds to \texttt{map}.
+      \item<4-> Each element of \texttt{items} responds to \texttt{description}.
+      \item<5-> Whatever \texttt{b.description} returns must be concatenatable by \texttt{join}.
     \end{itemize}
   \end{block}
   \end{visibleenv}
 \end{frame}
 
 \subsection{Extending Ruby}
+
+\begin{frame}
+  \frametitle{Extending ruby}
+  \begin{block}{Question:}
+    What if I want a method that ruby doesn't have?
+  \end{block}
+  \begin{visibleenv}<2->
+  \begin{block}{Answer:}
+    Extend ruby to have it!
+  \end{block}
+  \end{visibleenv}
+\end{frame}
 
 \begin{frame}[fragile]
   \frametitle{Adding \texttt{Fixnum\#inject}}
@@ -420,7 +513,7 @@
 \end{frame}
 
 \begin{frame}[fragile]
-  \frametitle{Adding \texttt{Fixnum\#inject} (cont.)}
+  \frametitle{lib/extensions/fixnum.rb}
   \begin{block}{No problem:}
   \begin{verbatim}
     class Fixnum
