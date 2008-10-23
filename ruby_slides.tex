@@ -2,6 +2,9 @@
 \usepackage{beamerthemesplit}
 \setbeamercovered{transparent}
 
+\newcommand<>{\marked}[1]{{\color#2{blue}#1}}
+\newcommand<>{\changed}[1]{{\color#2[rgb]{0,.4,0}#1}}
+
 \title{Ruby 101}
 \author{Dmitry Ratnikov}
 \date{\today}
@@ -380,14 +383,77 @@
   \end{block}
 \end{frame}
 
-\subsection{Interface}
+\subsection{Dynamic Method Generation}
 
-\begin{frame}
-  \frametitle{Question}
-  \begin{block}{}
-    What's an interface?
-  \end{block}
+\begin{frame}[t,fragile]
+  \frametitle{DRYing things up}
+    \begin{verbatim}
+module JavascriptHelper
+  def author_js author
+    "var author = "+
+    "constructAuthor({ name: #{author.name}})"
+  end
+  def book_js book
+    "var book = constructBook({ name: #{book.name}})"
+  end  
+  def author_js_tag author
+    script_tag author_js(author) 
+  end
+  def book_js_tag book; script_tag book_js(book) end
+end
+  \end{verbatim}
 \end{frame}
+
+\begin{frame}[t,fragile]
+  \frametitle{DRYing things up (cont.)}
+  \begin{onlyenv}<1-3>
+  \begin{block}{Before:}
+
+  \begin{semiverbatim}
+  \alert<2,3>{def} author\_js\alert<2,3>{\_tag} \marked<3>{author}
+    \alert<2,3>{script\_tag} author\alert<2,3>{\_js(}\marked<3>{author}\alert<2,3>{)}
+  end
+  \alert<2,3>{def} book\_js\alert<2,3>{\_tag} \marked{book}; \alert<2,3>{script\_tag} book\alert<2,3>{\_js(} \marked<3>{book}\alert<2,3>{)} end
+  \end{semiverbatim}
+  \begin{itemize}
+    \item<2-> Both methods have a very similar structure.
+    \item<3-> Both methods do the same things with their arguments.
+  \end{itemize}
+  \end{block}
+  \end{onlyenv}
+  \begin{onlyenv}<4-5>
+  \begin{block}{After refactoring:}
+  \begin{semiverbatim}\changed{
+  \%w(book\_js author\_js).each do |js\_method|
+    define\_method "\#\{js\_method\}\_tag" do |item|
+      script\_tag send(js\_method, item)
+    end
+  end}
+  \end{semiverbatim}
+  \begin{itemize}
+    \item<5> What about make all methods ending in \texttt{\_js} have a \texttt{\_tag} counterpart?
+  \end{itemize}
+  \end{block}
+  \end{onlyenv}
+  \begin{onlyenv}<6->
+  \begin{block}{After second refactoring:}
+  \begin{semiverbatim}\changed<6>{
+  instance\_methods.select do |m| 
+    m =~ /\_js\$/ 
+  end\note{Have to space break due to slide width}.each do |js\_method|
+    define\_method "#\{js\_method\}\_tag" do |*args|
+      script\_tag send(js\_method, *args)
+    end
+  end}
+  \end{semiverbatim}
+  \end{block}
+  \end{onlyenv}
+\end{frame}
+
+
+\appendix
+
+\section{Duck Typing and Interfaces}
 
 \begin{frame}
   \frametitle{Interfaces}
@@ -399,20 +465,6 @@
     \item<3-> In ruby, how components interact defines what interface they have.
     \item<4->[] (That's called duck typing)
   \end{itemize}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Duck typing}
-  \begin{block}{Duck typing principle}
-    If it walks like a duck and quacks like a duck, it is a duck.
-  \end{block}
-  \begin{visibleenv}<2>
-  \begin{block}{In practice that means}
-    \begin{itemize}
-      \item<2> What's important is what an object does (or can do) and not what it is.
-    \end{itemize}
-  \end{block}
-  \end{visibleenv}
 \end{frame}
 
 \end{document}
