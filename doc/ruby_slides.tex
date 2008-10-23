@@ -466,7 +466,7 @@
     \uncover<1->{class Library}
     \uncover<1->{  attr\_accessor :items}
     \uncover<1->{  def catalog}
-    \uncover<1->{    items.\alert<2>{map} \{ |b| \alert<3>{b.description} \}.\alert<4>{join ", "}}
+    \uncover<1->{    items.\alert<2>{map} \{ |i| \alert<3>{i.description} \}.\alert<4>{join ", "}}
     \uncover<1->{  end}
     \uncover<1->{end}
   \end{semiverbatim}
@@ -475,7 +475,7 @@
     \begin{itemize}
       \item<3-> \texttt{items} responds to \texttt{map}.
       \item<4-> Each element of \texttt{items} responds to \texttt{description}.
-      \item<5-> Whatever \texttt{b.description} returns must be concatenatable by \texttt{join}.
+      \item<5-> Whatever \texttt{i.description} returns must be concatenatable by \texttt{join}.
     \end{itemize}
   \end{block}
   \end{visibleenv}
@@ -529,52 +529,53 @@
   \end{block}
 \end{frame}
 
-\subsection{Dynamic Method Generation}
+\subsection{Dynamic ruby}
 
 \begin{frame}[t,fragile]
-  \frametitle{DRYing things up}
+  \frametitle{Case study}
     \begin{verbatim}
 module JavascriptHelper
   def author_js author
-    "var author = "+
-    "constructAuthor({ name: #{author.name}})"
+    "var author = constructAuthor(#{author.name})"
   end
   def book_js book
-    "var book = constructBook({ name: #{book.name}})"
+    "var book = constructBook(#{book.name})"
   end  
   def author_js_tag author
     script_tag author_js(author) 
   end
-  def book_js_tag book; script_tag book_js(book) end
+  def book_js_tag book
+    script_tag book_js(book) 
+  end
 end
   \end{verbatim}
 \end{frame}
 
 \begin{frame}[t,fragile]
-  \frametitle{DRYing things up (cont.)}
+  \frametitle{app/helpers/javascript\_helper.rb}
   \begin{onlyenv}<1-3>
-  \begin{block}{Before:}
-
   \begin{semiverbatim}
+  \# ...
   \alert<2,3>{def} author\_js\alert<2,3>{\_tag} \marked<3>{author}
     \alert<2,3>{script\_tag} author\_js\alert<2,3>{(}\marked<3>{author}\alert<2,3>{)}
   \alert<2,3>{end}
-  \alert<2,3>{def} book\_js\alert<2,3>{\_tag} \marked<3>{book}; \alert<2,3>{script\_tag} book\_js\alert<2,3>{(}\marked<3>{book}\alert<2,3>{)} \alert<2,3>{end}
+  \alert<2,3>{def} book\_js\alert<2,3>{\_tag} \marked<3>{book}
+    \alert<2,3>{script\_tag} book\_js\alert<2,3>{(}\marked<3>{book}\alert<2,3>{)}
+  \alert<2,3>{end}
   \end{semiverbatim}
   \begin{itemize}
     \item<2-> Both methods have a very similar structure.
     \item<3-> Both methods do the same things with their arguments.
   \end{itemize}
-  \end{block}
   \end{onlyenv}
   \begin{onlyenv}<4-5>
   \begin{block}{After refactoring:}
-  \begin{semiverbatim}\changed{
-  \%w(book\_js author\_js).each do |js\_method|
+  \begin{semiverbatim}
+  [:book\_js, :author\_js].each do |js\_method|
     define\_method "\#\{js\_method\}\_tag" do |item|
       script\_tag send(js\_method, item)
     end
-  end}
+  end
   \end{semiverbatim}
   \begin{itemize}
     \item<5> What about making all methods that end in \texttt{\_js} to have a \texttt{\_tag} counterpart?
@@ -583,33 +584,28 @@ end
   \end{onlyenv}
   \begin{onlyenv}<6->
   \begin{block}{After second refactoring:}
-  \begin{semiverbatim}\changed<6>{
+  \begin{semiverbatim}
   instance\_methods.select do |m| 
     m =~ /\_js\$/ 
   end\note{Have to space break due to slide width}.each do |js\_method|
     define\_method "#\{js\_method\}\_tag" do |*args|
       script\_tag send(js\_method, *args)
     end
-  end}
+  end
   \end{semiverbatim}
   \end{block}
   \end{onlyenv}
 \end{frame}
 
-\appendix
-
-\section{Duck Typing and Interfaces}
-
 \begin{frame}
-  \frametitle{Interfaces}
-  \begin{block}{Wikipedia says:}
-    Interface generally refers to an abstraction that an entity provides of itself to the outside.
+  \frametitle{More cool ruby things}
+  \begin{block}{Other things one can do with ruby:}
+    \begin{itemize}
+      \item Faking things when testing things.
+      \item Generate classes and modules dynamically.
+      \item Use hooks in ruby to provide aspect-oriented behavior.
+    \end{itemize}
   \end{block}
-  \begin{itemize}
-    \item<2-> In java, interface type defines how components may interact.
-    \item<3-> In ruby, how components interact defines what interface they have.
-    \item<4->[] (That's called duck typing)
-  \end{itemize}
 \end{frame}
 
 \end{document}
