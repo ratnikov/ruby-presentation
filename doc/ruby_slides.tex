@@ -12,20 +12,20 @@
 \begin{document}
 \frame{\titlepage}
 
-\section[]{Outline}
+\section[]{}
 
 \begin{frame}
   \frametitle{Outline}
   \begin{block}{General plan for today:}
     \begin{itemize}
-      \visible<2->{\item Introduce to the basic ruby syntax.}
-      \visible<3->{\item Show some cool things one can do with ruby.}
-      \visible<4->{\item Hopefully get you all excited about ruby.}
+      \visible<2->{\item Introduce you to the ruby world.}
+      \visible<4->{\item Show how one can do some cool things with it.}
+      \visible<5->{\item Hopefully you'll get all excited about it.}
     \end{itemize}
   \end{block}
 \end{frame}
 
-\section{Introduction}
+\section{Ruby intro}
 
 \begin{frame}
   \frametitle{What is ruby?}
@@ -42,17 +42,17 @@
 \begin{frame}[fragile]
   \frametitle{In ruby you can...}
   \begin{itemize}
-    \item<1->{Create variables:}
+    \item<2->{Create variables:}
       \begin{verbatim}
   pickaxe_book = "Programming Ruby"
   cs_bible = "Art of Computer Programming"
   js_book = "Javascript: The Good Parts"
     \end{verbatim}
-    \item<2->{Create arrays:}
+    \item<3->{Create arrays:}
     \begin{verbatim}
   available_books = [ pickaxe_book, cs_bible ]
     \end{verbatim}
-    \item<3->{Create hashes:}
+    \item<4->{Create hashes:}
     \begin{verbatim}
   library = {
     :available => available_books,
@@ -337,7 +337,7 @@
       \item<5-> Include that functionality in the \texttt{Book} and \texttt{Game} classes.
     \end{itemize}
   \end{block}
-  \begin{visibleenv}<7>
+  \begin{visibleenv}<6>
     \begin{block}{Solution:}
       Modules
     \end{block}
@@ -578,7 +578,7 @@ end
   end
   \end{semiverbatim}
   \begin{itemize}
-    \item<5> What about making all methods that end in \texttt{\_js} to have a \texttt{\_tag} counterpart?
+    \item<5> What about making all methods that end in \texttt{\_js} to \\ have a \texttt{\_tag} counterpart?
   \end{itemize}
   \end{block}
   \end{onlyenv}
@@ -597,15 +597,34 @@ end
   \end{onlyenv}
 \end{frame}
 
+\section[]{}
+
 \begin{frame}
   \frametitle{More cool ruby things}
   \begin{block}{Other things one can do with ruby:}
     \begin{itemize}
-      \item Faking things when testing things.
+      \item Fake things when testing things.
       \item Generate classes and modules dynamically.
       \item Use hooks in ruby to provide aspect-oriented behavior.
     \end{itemize}
   \end{block}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Resources}
+    \begin{itemize}
+      \item This presentation git clone url: \url{git://github.com/ratnikov/ruby-presentation.git}
+      \item Ruby documentation: \url{http://ruby-doc.org}
+      \item \#ruby-lang on IRC 
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Questions?}
+  \begin{centering}
+    \usebeamercolor{titlelike}
+    \textbf{\insertframetitle}
+  \end{centering}
 \end{frame}
 
 \end{document}
