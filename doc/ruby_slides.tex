@@ -5,7 +5,7 @@
 \newcommand<>{\marked}[1]{{\color#2{blue}#1}}
 \newcommand<>{\changed}[1]{{\color#2[rgb]{0,.4,0}#1}}
 
-\title{Ruby 101}
+\title{Ruby}
 \author{Dmitry Ratnikov}
 \date{\today}
 
@@ -19,7 +19,7 @@
   \begin{block}{General plan for today:}
     \begin{itemize}
       \visible<2->{\item Introduce to the basic ruby syntax.}
-      \visible<3->{\item Mention 3 principles that make can make your code better.}
+      \visible<3->{\item Show some cool things one can do with ruby.}
       \visible<4->{\item Hopefully get you all excited about ruby.}
     \end{itemize}
   \end{block}
@@ -93,7 +93,7 @@
     \end{verbatim}
     \item<2->{Inline conditionals:}
     \begin{verbatim}
-  puts "yay" unless boo?
+  puts "Hello world" unless lhc_started?
     \end{verbatim}
   \end{itemize}
 \end{frame}
@@ -332,9 +332,9 @@
 	\begin{itemize}
 	  \item<2-> does book-keeping of having a name
 	  \item<3-> does book-keeping of having an author.
-	  \item<5-> builds description out of the name and author.
+	  \item<4-> builds description out of the name and author.
 	\end{itemize}
-      \item<6-> Include that functionality in the \texttt{Book} and \texttt{Game} classes.
+      \item<5-> Include that functionality in the \texttt{Book} and \texttt{Game} classes.
     \end{itemize}
   \end{block}
   \begin{visibleenv}<7>
@@ -354,7 +354,7 @@
 
   \begin{block}{Game plan:}<2->
     \begin{itemize}
-      \item<2-> Create \texttt{Catalogable} module that gives \texttt{name} functionality.
+      \item<2-> Create \texttt{Catalogable} module that provides desired functionality.
       \item<3-> Include it into \texttt{Book} and \texttt{Game} classes.
     \end{itemize}
   \end{block}
