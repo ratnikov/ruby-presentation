@@ -13,126 +13,146 @@
 \frame{\titlepage}
 
 \section[]{Outline}
-\frame{\tableofcontents}
-
-\section{Basics}
 
 \begin{frame}
-  \frametitle{What is ruby?}
-  \begin{block}{Wikipedia says...}
-    Ruby is a \alert<2,3>{dynamic}, \alert<2,4>{reflective}, general purpose \alert<2,5>{object-oriented} programming language that combines syntax 
-    inspired by \alert<6>{Perl} with \alert<6>{Smalltalk}-like features. 
-  \end{block}
-\end{frame}
-  
-\begin{frame}[fragile]
-  \frametitle{Variables/Arrays/Hashes}
-  \begin{itemize}
-    \item<1->{Variables}
-      \begin{verbatim}
-	pickaxe_book = "Programming Ruby"
-	cs_bible = "Art of Computer Programming"
-	js_book = "Javascript: The Good Parts"
-      \end{verbatim}
-    \item<2->{Arrays}
-      \begin{verbatim}
-	available_books = [ pickaxe_book, cs_bible ]
-      \end{verbatim}
-    \item<3->{Hashes}
-      \begin{verbatim}
-	library = {
-	  :available => available_books,
-	  :checked_out => [ js_book ] 
-	}
-      \end{verbatim}
-  \end{itemize}
-\end{frame}
-
-\begin{frame}[fragile]
-  \frametitle{Defining Methods}
-  \begin{block}{Making life easier}
-    \begin{semiverbatim}
-    \uncover<1->{\alert<2>{def} \alert<3>{available?}\alert<2>{(library, book\_name)}}
-    \uncover<1->{  \alert<4>{library[:available].include?(book\_name)} }
-    \uncover<1->{\alert<2>{end}}
-    \end{semiverbatim}
+  \frametitle{Outline}
+  \begin{block}{General plan for today:}
     \begin{itemize}
-      \item<2>Method body is enclosed by \texttt{def} and \texttt{end}. \\ Parameters are a list of variable names.
-      \item<3>Method name must be lower case letters and \_. \\ It may be suffixed by ?, = or !.
-      \item<4>Last line is returned by the method.
+      \visible<2->{\item Introduce to the basic ruby syntax.}
+      \visible<3->{\item Mention 3 principles that make can make your code better.}
+      \visible<4->{\item Hopefully get you all excited about ruby.}
     \end{itemize}
   \end{block}
 \end{frame}
 
-\begin{frame}[fragile]
-  \frametitle{Conditionals}
-  \begin{block}{if/else syntax}
-    \begin{verbatim}
-      if available?(library, "Art of War")
-        puts "Sun Tzu's Art of War is available."
-      else
-        puts "Art of War is not available."
-        puts "Try later..."
-      end
-    \end{verbatim}
-    \begin{block}{Can be inlined:}
-      \verb|      puts "yay" unless boo?|
-    \end{block}
+\section{Introduction}
+
+\begin{frame}
+  \frametitle{What is ruby?}
+  \begin{block}{Wikipedia says...}
+    \begin{visibleenv}<2->
+    Ruby is a \alert<3,4>{dynamic}, \alert<3,5>{reflective}, general purpose \alert<3,6>{object-oriented} programming language that combines syntax 
+    inspired by \alert<3,7>{Perl} with \alert<3,7>{Smalltalk}-like features. 
+    \end{visibleenv}
   \end{block}
 \end{frame}
 
-\begin{frame}[fragile]
-  \frametitle{Loops}
+\subsection{Imperative basics}
 
-  \begin{block}{For/While loops:}
-    \begin{verbatim}
-      file = File.open("checked_out_backup.txt")
-      while (book = file.gets)
-        library[:checked_out] << book
-      end
+\begin{frame}[fragile]
+  \frametitle{In ruby you can...}
+  \begin{itemize}
+    \item<1->{Create variables:}
+      \begin{verbatim}
+  pickaxe_book = "Programming Ruby"
+  cs_bible = "Art of Computer Programming"
+  js_book = "Javascript: The Good Parts"
     \end{verbatim}
+    \item<2->{Create arrays:}
     \begin{verbatim}
-      str = ""
-      for i in 0..(library[:checked_out].size) do
-        str += "#{library[:checked_out][i]} "
-      end
-      puts "Checked out books: #{str}"
+  available_books = [ pickaxe_book, cs_bible ]
     \end{verbatim}
-  \end{block}
+    \item<3->{Create hashes:}
+    \begin{verbatim}
+  library = {
+    :available => available_books,
+    :checked_out => [ js_book ] 
+  }
+      \end{verbatim}
+  \end{itemize}
 \end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{In ruby you can...}
+  \begin{itemize}
+    \item<1->{Create methods:}
+    \begin{verbatim}
+  def available?(library, book_name)
+    library[:available].include?(book_name)
+  end
+    \end{verbatim}
+    \item<2->{Invoke methods (and print to screen):}
+  \begin{verbatim}
+  str = "Available: #{available? library, book_name}"
+  puts str
+    \end{verbatim}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{In ruby you can...}
+  \begin{itemize}
+    \item<1->{Do if/else:}
+    \begin{verbatim}
+  if available?(library, "Art of War")
+    puts "Sun Tzu's Art of War is available."
+  else
+    puts "Art of War is not available."
+    puts "Try later..."
+  end
+    \end{verbatim}
+    \item<2->{Inline conditionals:}
+    \begin{verbatim}
+  puts "yay" unless boo?
+    \end{verbatim}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{In ruby you can...}
+  \begin{itemize}
+    \item<1->{Do while loops:}
+    \begin{verbatim}
+  file = File.open("checked_out_backup.txt")
+  while (book = file.gets)
+    library[:checked_out] << book
+  end
+    \end{verbatim}
+
+    \item<2->{Do for loops:}
+    \begin{verbatim}
+  str = ""
+  for i in 0..(library[:checked_out].size) do
+    str += "#{library[:checked_out][i]} "
+  end
+  puts "Checked out books: #{str}"
+    \end{verbatim}
+  \end{itemize}
+\end{frame}
+
+\subsection{Blocks and procs}
 
 \begin{frame}[t,fragile]
-  \frametitle{Blocks/iterators}
-  \begin{block}{Same as for, but easier}
+  \frametitle{Using blocks}
+  \begin{block}{But ruby allows simpler iteration via blocks:}
     \begin{semiverbatim}
-    \uncover<1->{str = ""}
-    \uncover<1->{\alert<2>{library[:checked\_out].each} \alert<3>{do |book|}} 
-    \uncover<1->{  \alert<4>{str += "#\{book\} "}}
-    \uncover<1->{\alert<3>{end}}
-    \uncover<1->{puts "Checked out books: #\{str\}}
+  \uncover<1->{str = ""}
+  \uncover<1->{\alert<3>{books.each} \alert<2>{do |book|}} 
+  \uncover<1->{  \alert<2>{str += "#\{book\} "}}
+  \uncover<1->{\alert<2>{end}}
+  \uncover<1->{puts "Checked out books: #\{str\}}
     \end{semiverbatim}
   \end{block}
 
   \begin{itemize}
-    \item<2> Invoke method \texttt{each} on the checked out books array.
-    \item<3> Declare a block that takes one parameter as \texttt{book}.
-    \item<4> Specify the body of the block to append the \texttt{book} to the \texttt{str}.
+    \item<2-> Define what to do with an element of the array in a block.
+    \item<3-> Apply that block to each element of the array.
   \end{itemize}
 \end{frame}
 
 \begin{frame}[t,fragile]
-  \frametitle{Accumulator Style}
-  \begin{block}{Even easier}
+  \frametitle{Using accumulating blocks}
+  \begin{block}{Might as well use accumulator style:}
     \begin{semiverbatim}
-    \uncover<1->{str = \alert<4>{arr.inject("") do \alert<2>{|acc, item|}}}
-    \uncover<1->{  \alert<3,4>{"#\{acc\} #\{item\}"}}
-    \uncover<1->{\alert<4>{end}}
-    \uncover<1->{puts "Checked out books: #\{str\}"}
+  \uncover<1->{str = \alert<4>{arr.inject("") do \alert<2>{|acc, item|}}}
+  \uncover<1->{  \alert<3,4>{"#\{acc\} #\{item\}"}}
+  \uncover<1->{\alert<4>{end}}
+  \uncover<1->{puts "Checked out books: #\{str\}"}
     \end{semiverbatim}
     \begin{itemize}
-      \item<2> \texttt{inject}'s block takes accumulator and book parameters.
-      \item<3> Return of the block is passed in the next acc
-      \item<4> Last acc is returned by the \texttt{inject} which is assigned to \texttt{str}.
+      \item<2-> \texttt{inject}'s block takes accumulator and book parameters.
+      \item<3-> Return of the block is passed in the next acc
+      \item<4-> Last acc is returned by the \texttt{inject} which is assigned to \texttt{str}.
     \end{itemize}
   \end{block}
 \end{frame}
@@ -163,18 +183,43 @@
   \end{onlyenv}
 \end{frame}
 
-\section{Object orientation}
-\subsection{Classes}
+\subsection{Object-oriented basics}
 
-\begin{frame}
-  \frametitle{Declaring a class}
-  \begin{block}{Declaration syntax:}
+\begin{frame}[fragile]
+  \frametitle{In ruby you can...}
   \begin{itemize}
-    \item Classes are declared by keyword \texttt{class}
-    \item Instance variables are specified by prepending '@' to \\ a variable name (e.g. \texttt{@foo})
-    \item Class variables are specified by prepending '@@' (e.g. \texttt{@@bar})
+    \item<1->{Create classes:}
+    \begin{verbatim}
+  class Foo
+    @@description = "The most important class"
+    def foo
+      @foo ||= busily_lookup_foo
+      @foo
+    end
+  end
+    \end{verbatim}
   \end{itemize}
-  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{In ruby you can...}
+  \begin{itemize}
+    \item<1->{Extend classes:}
+    \begin{semiverbatim}
+  class Bar < Foo
+    \alert<2>{attr\_accessor :bar}
+    \alert<3>{def initialize options = \{\}}
+      self.bar = options.delete(:bar)
+    \alert<3>{end}
+  end
+    \end{semiverbatim}
+    \begin{visibleenv}<2->
+    \begin{itemize}
+      \item<2-> Defines a reader/writer for bar attribute.
+      \item<3-> Defines constructor for \texttt{Bar} class.
+    \end{itemize}
+    \end{visibleenv}
+  \end{itemize}
 \end{frame}
 
 \begin{frame}[t,fragile]
