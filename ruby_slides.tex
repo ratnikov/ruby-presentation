@@ -411,9 +411,9 @@ end
 
   \begin{semiverbatim}
   \alert<2,3>{def} author\_js\alert<2,3>{\_tag} \marked<3>{author}
-    \alert<2,3>{script\_tag} author\alert<2,3>{\_js(}\marked<3>{author}\alert<2,3>{)}
-  end
-  \alert<2,3>{def} book\_js\alert<2,3>{\_tag} \marked{book}; \alert<2,3>{script\_tag} book\alert<2,3>{\_js(} \marked<3>{book}\alert<2,3>{)} end
+    \alert<2,3>{script\_tag} author\_js\alert<2,3>{(}\marked<3>{author}\alert<2,3>{)}
+  \alert<2,3>{end}
+  \alert<2,3>{def} book\_js\alert<2,3>{\_tag} \marked<3>{book}; \alert<2,3>{script\_tag} book\_js\alert<2,3>{(}\marked<3>{book}\alert<2,3>{)} \alert<2,3>{end}
   \end{semiverbatim}
   \begin{itemize}
     \item<2-> Both methods have a very similar structure.
@@ -449,7 +449,6 @@ end
   \end{block}
   \end{onlyenv}
 \end{frame}
-
 
 \appendix
 
