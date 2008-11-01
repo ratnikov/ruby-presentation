@@ -93,7 +93,7 @@
     \end{verbatim}
     \item<2->{Inline conditionals:}
     \begin{verbatim}
-  puts "Hello world" unless lhc_started?
+  puts "Hello world" unless lhc.started?
     \end{verbatim}
   \end{itemize}
 \end{frame}
@@ -161,7 +161,7 @@
   \frametitle{Declaring a Method With Block}
   \begin{block}{Sample implementation of \texttt{inject}}
     \begin{semiverbatim}
-      \uncover<1->{def available\_inject(library, init, \alert<2>{\&block})}
+      \uncover<1->{def available\_inject(library, init)}
       \uncover<1->{  \alert<2>{raise "Block missing" unless block\_given?}}
       \uncover<1->{  arr = library[:checked\_out]}
       \uncover<1->{  acc = init}
@@ -175,7 +175,6 @@
     \begin{itemize}
       \only<1>{\item{}}
       \begin{onlyenv}<2>
-	\item Block is passed using \&
 	\item \texttt{block\_given?} returns whether method was provided a block.
       \end{onlyenv}
       \only<3>{\item \texttt{yield} yields control to the provided block with specified parameters.}
@@ -250,7 +249,7 @@
   \begin{verbatim}
   class Book
     attr_accessor :name, :author, :isbn
-    def description
+    def desc
       "#{name} by #{author}"
     end
 
@@ -269,9 +268,9 @@
   \frametitle{test/unit/book\_test.rb}
   \begin{verbatim}
   class BookTest < Test::Unit::TestCase
-    def test_description
+    def test_desc
       assert_equal "foo by bar", 
-        Book.new(:name => "foo", :author => "bar")
+        Book.new(:name => "foo", :author => "bar").desc
     end
     def test_required_options
       asser_raise(RuntimeError, "should need name) do
@@ -292,7 +291,7 @@
     \begin{semiverbatim}
   class Game
     attr\_accessor :name, :author, :platform
-    \alert<2>{def description
+    \alert<2>{def desc
       "#\{name\} by #\{author\}"
     end}
 
@@ -365,7 +364,7 @@
   \begin{verbatim}
   module Catalogable
     attr_accessor :name, :author
-    def description
+    def desc
       "#{name} by #{author}"
     end
   end
@@ -435,11 +434,13 @@
     \end{itemize}
   \end{block}
   \end{visibleenv}
-  \begin{visibleenv}
+  \begin{visibleenv}<6->
   \begin{block}{But what about DRY?}
     \begin{itemize}
-      \item DRY things up when you actually repeat yourself, \\
+      \visible<7->{
+        \item DRY things up when you actually repeat yourself, \\
         not when you think you may repeat yourself.
+      }
     \end{itemize}
   \end{block}
   \end{visibleenv}
@@ -466,7 +467,7 @@
     \uncover<1->{class Library}
     \uncover<1->{  attr\_accessor :items}
     \uncover<1->{  def catalog}
-    \uncover<1->{    items.\alert<2>{map} \{ |i| \alert<3>{i.description} \}.\alert<4>{join ", "}}
+    \uncover<1->{    items.\alert<3>{map} \{ |i| \alert<4>{i.desc} \}.\alert<5>{join ", "}}
     \uncover<1->{  end}
     \uncover<1->{end}
   \end{semiverbatim}
@@ -474,8 +475,8 @@
   \begin{block}{Only things this \texttt{Library} implementation cares about:}
     \begin{itemize}
       \item<3-> \texttt{items} responds to \texttt{map}.
-      \item<4-> Each element of \texttt{items} responds to \texttt{description}.
-      \item<5-> Whatever \texttt{i.description} returns must be concatenatable by \texttt{join}.
+      \item<4-> Each element of \texttt{items} responds to \texttt{desc}.
+      \item<5-> Whatever \texttt{i.desc} returns must be concatenatable by \texttt{join}.
     \end{itemize}
   \end{block}
   \end{visibleenv}
