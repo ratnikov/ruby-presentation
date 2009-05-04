@@ -1,0 +1,632 @@
+\documentclass[10]{beamer}
+\usepackage{beamerthemesplit}
+\setbeamercovered{transparent}
+
+\newcommand<>{\marked}[1]{{\color#2{blue}#1}}
+\newcommand<>{\changed}[1]{{\color#2[rgb]{0,.4,0}#1}}
+
+\title{Ruby}
+\author{Dmitry Ratnikov \\ Roman Kofman}
+\institute{Webitects}
+\date{\today}
+
+\begin{document}
+\frame{\titlepage}
+
+\section[]{}
+
+\begin{frame}
+  \frametitle{Outline}
+  \begin{block}{General plan for today:}
+    \begin{itemize}
+      \visible<2->{\item Introduce you to the ruby world.}
+      \visible<4->{\item Show how one can do some cool things with it.}
+      \visible<5->{\item Hopefully you'll get all excited about it.}
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\section{Ruby intro}
+
+\begin{frame}
+  \frametitle{What is ruby?}
+  \begin{block}{Wikipedia says...}
+    \begin{visibleenv}<2->
+    Ruby is a \alert<3,4>{dynamic}, \alert<3,5>{reflective}, general purpose \alert<3,6>{object-oriented} programming language that combines syntax 
+    inspired by \alert<3,7>{Perl} with \alert<3,7>{Smalltalk}-like features. 
+    \end{visibleenv}
+  \end{block}
+\end{frame}
+
+\subsection{Imperative basics}
+
+\begin{frame}[fragile]
+  \frametitle{In ruby you can...}
+  \begin{itemize}
+    \item<2->{Create variables:}
+      \begin{verbatim}
+  pickaxe_book = "Programming Ruby"
+  cs_bible = "Art of Computer Programming"
+  js_book = "Javascript: The Good Parts"
+    \end{verbatim}
+    \item<3->{Create arrays:}
+    \begin{verbatim}
+  available_books = [ pickaxe_book, cs_bible ]
+    \end{verbatim}
+    \item<4->{Create hashes:}
+    \begin{verbatim}
+  library = {
+    :available => available_books,
+    :checked_out => [ js_book ] 
+  }
+      \end{verbatim}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{In ruby you can...}
+  \begin{itemize}
+    \item<1->{Create methods:}
+    \begin{verbatim}
+  def available?(library, book_name)
+    library[:available].include?(book_name)
+  end
+    \end{verbatim}
+    \item<2->{Invoke methods (and print to screen):}
+  \begin{verbatim}
+  str = "Available: #{available? library, book_name}"
+  puts str
+    \end{verbatim}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{In ruby you can...}
+  \begin{itemize}
+    \item<1->{Do if/else:}
+    \begin{verbatim}
+  if available?(library, "Art of War")
+    puts "Sun Tzu's Art of War is available."
+  else
+    puts "Art of War is not available."
+    puts "Try later..."
+  end
+    \end{verbatim}
+    \item<2->{Inline conditionals:}
+    \begin{verbatim}
+  puts "Hello world" unless lhc.started?
+    \end{verbatim}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{In ruby you can...}
+  \begin{itemize}
+    \item<1->{Do while loops:}
+    \begin{verbatim}
+  file = File.open("checked_out_backup.txt")
+  while (book = file.gets)
+    library[:checked_out] << book
+  end
+    \end{verbatim}
+
+    \item<2->{Do for loops:}
+    \begin{verbatim}
+  str = ""
+  for i in 0..(library[:checked_out].size) do
+    str += "#{library[:checked_out][i]} "
+  end
+  puts "Checked out books: #{str}"
+    \end{verbatim}
+  \end{itemize}
+\end{frame}
+
+\subsection{Blocks and procs}
+
+\begin{frame}[t,fragile]
+  \frametitle{Using blocks}
+  \begin{block}{But ruby allows simpler iteration via blocks:}
+    \begin{semiverbatim}
+  \uncover<1->{str = ""}
+  \uncover<1->{\alert<3>{books.each} \alert<2>{do |book|}} 
+  \uncover<1->{  \alert<2>{str += "#\{book\} "}}
+  \uncover<1->{\alert<2>{end}}
+  \uncover<1->{puts "Checked out books: #\{str\}}
+    \end{semiverbatim}
+  \end{block}
+
+  \begin{itemize}
+    \item<2-> Define what to do with an element of the array in a block.
+    \item<3-> Apply that block to each element of the array.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[t,fragile]
+  \frametitle{Using accumulating blocks}
+  \begin{block}{Might as well use accumulator style:}
+    \begin{semiverbatim}
+  \uncover<1->{str = \alert<4>{arr.inject("") do \alert<2>{|acc, item|}}}
+  \uncover<1->{  \alert<3,4>{"#\{acc\} #\{item\}"}}
+  \uncover<1->{\alert<4>{end}}
+  \uncover<1->{puts "Checked out books: #\{str\}"}
+    \end{semiverbatim}
+    \begin{itemize}
+      \item<2-> \texttt{inject}'s block takes accumulator and book parameters.
+      \item<3-> Return of the block is passed in the next acc
+      \item<4-> Last acc is returned by the \texttt{inject} which is assigned to \texttt{str}.
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[t,fragile]
+  \frametitle{Declaring a Method With Block}
+  \begin{block}{Sample implementation of \texttt{inject}}
+    \begin{semiverbatim}
+      \uncover<1->{def available\_inject(library, init)}
+      \uncover<1->{  \alert<2>{raise "Block missing" unless block\_given?}}
+      \uncover<1->{  arr = library[:checked\_out]}
+      \uncover<1->{  acc = init}
+      \uncover<1->{  arr.each \{ |item| acc = \alert<3>{yield(acc, item)} \} }
+      \uncover<1->{  acc}
+      \uncover<1->{end}
+    \end{semiverbatim}
+  \end{block}
+
+  \begin{onlyenv}<2->
+    \begin{itemize}
+      \only<1>{\item{}}
+      \begin{onlyenv}<2>
+	\item \texttt{block\_given?} returns whether method was provided a block.
+      \end{onlyenv}
+      \only<3>{\item \texttt{yield} yields control to the provided block with specified parameters.}
+    \end{itemize}
+  \end{onlyenv}
+\end{frame}
+
+\subsection{Object-oriented basics}
+
+\begin{frame}[fragile]
+  \frametitle{In ruby you can...}
+  \begin{itemize}
+    \item<1->{Create classes:}
+    \begin{verbatim}
+  class Foo
+    @@description = "The most important class"
+    def foo
+      @foo ||= busily_lookup_foo
+      @foo
+    end
+  end
+    \end{verbatim}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{In ruby you can...}
+  \begin{itemize}
+    \item<1->{Extend classes:}
+    \begin{semiverbatim}
+  class Bar < Foo
+    \alert<2>{attr\_accessor :bar}
+    \alert<3>{def initialize options = \{\}}
+      self.bar = options.delete(:bar)
+    \alert<3>{end}
+  end
+    \end{semiverbatim}
+    \begin{visibleenv}<2->
+    \begin{itemize}
+      \item<2-> Defines a reader/writer for bar attribute.
+      \item<3-> Defines constructor for \texttt{Bar} class.
+    \end{itemize}
+    \end{visibleenv}
+  \end{itemize}
+\end{frame}
+
+\section{Library project}
+
+\subsection{Specification}
+
+\begin{frame}
+  \frametitle{Library manager}
+  \begin{block}{Boss says:}
+    \begin{quote}
+    Make a library managing application.
+    \end{quote}
+  \end{block}
+  \begin{visibleenv}<2->
+  \begin{block}{After researching the topic, we deduce that the application should:}
+    \begin{itemize}
+      \item<2-> Track books and games for check in and check out. 
+      \item<3-> Provide cataloging of available items.
+    \end{itemize}
+  \end{block}
+  \end{visibleenv}
+\end{frame}
+
+\subsection{Book class}
+
+\begin{frame}[fragile]
+  \frametitle{app/models/book.rb}
+  \begin{verbatim}
+  class Book
+    attr_accessor :name, :author, :isbn
+    def desc
+      "#{name} by #{author}"
+    end
+
+    def initialize options = {}
+      self.name = options.delete(:name) or
+        raise("Need name.")
+      self.author = options.delete(:author) or 
+        raise("Need author.")
+      self.isbn = options.delete(:isbn)
+    end
+  end
+  \end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{test/unit/book\_test.rb}
+  \begin{verbatim}
+  class BookTest < Test::Unit::TestCase
+    def test_desc
+      assert_equal "foo by bar", 
+        Book.new(:name => "foo", :author => "bar").desc
+    end
+    def test_required_options
+      assert_raise(RuntimeError, "should need name") do
+        Book.new :author => "foo"
+      end
+      assert_raise(RuntimeError, "should need author") do
+        Book.new :name => "bar"
+      end
+    end
+  end
+  \end{verbatim}
+\end{frame}
+
+\subsection{Game class}
+
+\begin{frame}[fragile]
+  \frametitle{app/models/game.rb}
+    \begin{semiverbatim}
+  class Game
+    attr\_accessor :name, :author, :platform
+    \alert<2>{def desc
+      "#\{name\} by #\{author\}"
+    end}
+
+    def initialize options = \{\}
+      \alert<2>{self.name = options.delete(:name) or
+        raise("Need name.")
+      self.author = options.delete(:author) or 
+        raise("Need author.")}
+      self.platform = options.delete(:platform)
+    end
+    \end{semiverbatim}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{app/models/game.rb 2.0}
+  \begin{semiverbatim}
+  class Game \alert<2>{< Book}
+    \alert<3>{attr\_accessor :platform}
+    def initialize options = \{\}
+      super(options)
+      self.platform = options.delete(:platform)
+    end
+  end
+  \end{semiverbatim}
+  \begin{itemize}
+    \item<2-> Now Game inherits all methods from Book class.
+    \item<3-> Has an additional platform attribute.
+    \item<4-> But... inherits isbn, which games do not really have.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{How do we fix it?}
+  \begin{block}{What we really want is:}
+    \begin{itemize}
+      \item<1-> Encapsulate the `Catalogable' functionality that:
+	\begin{itemize}
+	  \item<2-> does book-keeping of having a name
+	  \item<3-> does book-keeping of having an author.
+	  \item<4-> builds description out of the name and author.
+	\end{itemize}
+      \item<5-> Include that functionality in the \texttt{Book} and \texttt{Game} classes.
+    \end{itemize}
+  \end{block}
+  \begin{visibleenv}<6>
+    \begin{block}{Solution:}
+      Modules
+    \end{block}
+  \end{visibleenv}
+\end{frame}
+
+\subsection{Modules}
+
+\begin{frame}
+  \frametitle{Planning the module}
+  \begin{definition}[Module]
+    A Module is a collection of methods and constants.
+  \end{definition}
+
+  \begin{block}{Game plan:}<2->
+    \begin{itemize}
+      \item<2-> Create \texttt{Catalogable} module that provides desired functionality.
+      \item<3-> Include it into \texttt{Book} and \texttt{Game} classes.
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{app/models/catalogable.rb}
+  \begin{verbatim}
+  module Catalogable
+    attr_accessor :name, :author
+    def desc
+      "#{name} by #{author}"
+    end
+  end
+  \end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Using a module}
+  \begin{semiverbatim}
+    \uncover<1->{class Book}
+    \uncover<1->{  include Catalogable}
+    \uncover<1->{  attr\_accessor :isbn}
+    \uncover<1->{end}
+    \uncover<1->{class Game}
+    \uncover<1->{  include Catalogable}
+    \uncover<1->{  attr\_accessor :platform}
+    \uncover<1->{end}
+  \end{semiverbatim}
+
+  \begin{itemize}
+    \item \texttt{Book} and \texttt{Game} are now independent and shared functionality is abstracted neatly in the \texttt{Catalogable} module.
+  \end{itemize}
+\end{frame}
+
+\section{The cool bits}
+
+\begin{frame}
+  \begin{block}{Ruby: The cool bits}
+    \begin{itemize}
+      \item Some ruby principles
+      \item Extending ruby
+      \item DRYing things up with dynamic method generation.
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\subsection{Ruby principles}
+
+\begin{frame}
+  \frametitle{Principle \#1 (DRY)}
+  \begin{block}{``Don't Repeat Yourself'' principle:}
+    If you have to do something more than once, abstract it away.
+  \end{block}
+  \begin{visibleenv}<2->
+  \begin{block}{Why?}
+      \begin{itemize}
+      \visible<3->{\item Code duplication means you wrote it at least twice.}
+      \visible<4->{\item Code duplication reduces clarity.}
+      \visible<5->{\item Code duplication is much harder to keep in sync.}
+    \end{itemize}
+  \end{block}
+  \end{visibleenv}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Principle \#2 (YAGNI)}
+  \begin{block}{``You Ain't Gonna Need It'' principle:}
+    Always implement things when you actually need them, \\
+    never when you just foresee that you need them.
+  \end{block}
+  \begin{visibleenv}<2->
+  \begin{block}{Why?}
+    \begin{itemize}
+    \visible<3->{\item Time is better spent on something you actually need}
+    \visible<4->{\item What you predict will happen usually is not what really happens.}
+    \visible<5->{\item By the time you will need it, you will know the problem better.} 
+    \end{itemize}
+  \end{block}
+  \end{visibleenv}
+  \begin{visibleenv}<6->
+  \begin{block}{But what about DRY?}
+    \begin{itemize}
+      \visible<7->{
+        \item DRY things up when you actually repeat yourself, \\
+        not when you think you may repeat yourself.
+      }
+    \end{itemize}
+  \end{block}
+  \end{visibleenv}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Principle \#3 (Duck typing)}
+  \begin{block}{Duck typing principle:}
+    If it walks like a duck and quacks like a duck, it is a duck.
+  \end{block}
+  \begin{visibleenv}<2->
+  \begin{block}{In practice that means}
+    \begin{itemize}
+      \visible<2->{\item What's important is what an object does, not what it is.}
+      \visible<3->{\item In duck-typed languages, interfaces are implicitly specified by defined methods.}
+    \end{itemize}
+  \end{block}
+  \end{visibleenv}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Duck typing in use}
+  \begin{semiverbatim}
+    \uncover<1->{class Library}
+    \uncover<1->{  attr\_accessor :items}
+    \uncover<1->{  def catalog}
+    \uncover<1->{    items.\alert<3>{map} \{ |i| \alert<4>{i.desc} \}.\alert<5>{join ", "}}
+    \uncover<1->{  end}
+    \uncover<1->{end}
+  \end{semiverbatim}
+  \begin{visibleenv}<2->
+  \begin{block}{Only things this \texttt{Library} implementation cares about:}
+    \begin{itemize}
+      \item<3-> \texttt{items} responds to \texttt{map}.
+      \item<4-> Each element of \texttt{items} responds to \texttt{desc}.
+      \item<5-> Whatever \texttt{i.desc} returns must be concatenatable by \texttt{join}.
+    \end{itemize}
+  \end{block}
+  \end{visibleenv}
+\end{frame}
+
+\subsection{Extending Ruby}
+
+\begin{frame}
+  \frametitle{Extending ruby}
+  \begin{block}{Question:}
+    What if I want a method that ruby doesn't have?
+  \end{block}
+  \begin{visibleenv}<2->
+  \begin{block}{Answer:}
+    Extend ruby to have it!
+  \end{block}
+  \end{visibleenv}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Adding \texttt{Fixnum\#inject}}
+  \begin{block}{Suppose we want to be able to do:}
+  \begin{verbatim}
+     sorted_profiles = 50.inject([]) do |acc| 
+       acc + [Profile.random!]
+     end.sort_by { |p| p.name }
+  \end{verbatim}
+  \end{block}
+
+  \begin{block}{But...}<2>
+    \begin{itemize}
+      \item But ruby doesn't have Fixnum\#inject
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{lib/extensions/fixnum.rb}
+  \begin{block}{No problem:}
+  \begin{verbatim}
+    class Fixnum
+      def inject(init = nil, &block)
+        raise "Block missing" unless block_given?
+        acc = init
+        for i in 0..(self-1) do
+          init = yield(init, i)
+        end
+      end
+    end
+  \end{verbatim}
+  \end{block}
+\end{frame}
+
+\subsection{Dynamic ruby}
+
+\begin{frame}[t,fragile]
+  \frametitle{Case study}
+    \begin{verbatim}
+module JavascriptHelper
+  def author_js author
+    "var author = constructAuthor(#{author.name})"
+  end
+  def book_js book
+    "var book = constructBook(#{book.name})"
+  end  
+  def author_js_tag author
+    script_tag author_js(author) 
+  end
+  def book_js_tag book
+    script_tag book_js(book) 
+  end
+end
+  \end{verbatim}
+\end{frame}
+
+\begin{frame}[t,fragile]
+  \frametitle{app/helpers/javascript\_helper.rb}
+  \begin{onlyenv}<1-3>
+  \begin{semiverbatim}
+  \# ...
+  \alert<2,3>{def} author\_js\alert<2,3>{\_tag} \marked<3>{author}
+    \alert<2,3>{script\_tag} author\_js\alert<2,3>{(}\marked<3>{author}\alert<2,3>{)}
+  \alert<2,3>{end}
+  \alert<2,3>{def} book\_js\alert<2,3>{\_tag} \marked<3>{book}
+    \alert<2,3>{script\_tag} book\_js\alert<2,3>{(}\marked<3>{book}\alert<2,3>{)}
+  \alert<2,3>{end}
+  \end{semiverbatim}
+  \begin{itemize}
+    \item<2-> Both methods have a very similar structure.
+    \item<3-> Both methods do the same things with their arguments.
+  \end{itemize}
+  \end{onlyenv}
+  \begin{onlyenv}<4-5>
+  \begin{block}{After refactoring:}
+  \begin{semiverbatim}
+  [:book\_js, :author\_js].each do |js\_method|
+    define\_method "\#\{js\_method\}\_tag" do |item|
+      script\_tag send(js\_method, item)
+    end
+  end
+  \end{semiverbatim}
+  \begin{itemize}
+    \item<5> What about making all methods that end in \texttt{\_js} to \\ have a \texttt{\_tag} counterpart?
+  \end{itemize}
+  \end{block}
+  \end{onlyenv}
+  \begin{onlyenv}<6->
+  \begin{block}{After second refactoring:}
+  \begin{semiverbatim}
+  instance\_methods.select do |m| 
+    m =~ /\_js\$/ 
+  end\note{Have to space break due to slide width}.each do |js\_method|
+    define\_method "#\{js\_method\}\_tag" do |*args|
+      script\_tag send(js\_method, *args)
+    end
+  end
+  \end{semiverbatim}
+  \end{block}
+  \end{onlyenv}
+\end{frame}
+
+\section[]{}
+
+\begin{frame}
+  \frametitle{More cool ruby things}
+  \begin{block}{Other things one can do with ruby:}
+    \begin{itemize}
+      \item Stubbing things when testing.
+      \item Generate classes and modules dynamically.
+      \item Use hooks in ruby to provide aspect-oriented behavior.
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Resources}
+    \begin{itemize}
+      \item This presentation git clone url: \url{git://github.com/ratnikov/ruby-presentation.git}
+      \item Ruby documentation: \url{http://ruby-doc.org}
+      \item \#ruby-lang on IRC 
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Questions?}
+  \begin{centering}
+    \usebeamercolor{titlelike}
+    \textbf{\insertframetitle}
+  \end{centering}
+\end{frame}
+
+\end{document}
